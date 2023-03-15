@@ -1,0 +1,26 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
+
+jobs:
+  analyze:
+    name: Analyze SCA
+    runs-on: ubuntu-latest
+    env:
+      KEY: ${{ secrets.KEY }}
+      URL: ${{ secrets.URL }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: scan
+      run: docker run --rm -v $PWD:/action-test -w /action-test bridgecrew/checkov:latest -f yarn.lock --bc-api-key $KEY --prisma-api-url $URL --repo-id sm/scascan --use-enforcement-rules
